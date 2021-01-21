@@ -5,6 +5,8 @@ import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
 import me.realduckoh.twitchinteractions.rewards.GameEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,15 +37,22 @@ public class RewardCommand implements EventListener {
                 event.getTwitchChat().sendMessage(channelName,"Please enter a user to reward.");
             }
 
-            Player player = Bukkit.getPlayer(args[1]);
-            if (player == null) event.getTwitchChat().sendMessage(channelName,"The user \"" + args[1] + "\" does not exist" );
-            double random = ThreadLocalRandom.current().nextDouble();
-            for (int i = 0; i < probabilities.size(); i++) {
-                if (random <= probabilities.get(i)) {
-                    rewards.get(i).give(player);
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    Player player = Bukkit.getPlayer(args[1]);
+                    if (player == null) event.getTwitchChat().sendMessage(channelName,"The user \"" + args[1] + "\" does not exist" );
+                    double random = ThreadLocalRandom.current().nextDouble();
+                    for (int i = 0; i < probabilities.size(); i++) {
+                        if (random <= probabilities.get(i)) {
+                            rewards.get(i).give(player);
+                            break;
+                        }
+                    }
+                    event.getTwitchChat().sendMessage(channelName,"A reward was sent by " + senderChannelName + " to "  + args[1]);
                 }
-            }
-            event.getTwitchChat().sendMessage(channelName,"A reward was sent by " + senderChannelName + " to "  + args[1]);
+            }.runTask(JavaPlugin.getPlugin(TwitchInteractions.class));
+
         }
     }
 
