@@ -1,0 +1,6 @@
+name: TwitchInteractions
+version: ${project.version}
+main: me.realduckoh.twitchinteractions.TwitchInteractions
+api-version: 1.16
+authors: [ RealDuckoh ]
+description: Allow twitch viewers to interact with your game!
